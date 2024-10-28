@@ -3,7 +3,7 @@ package taskOne;
 public class CandyObject {
 
 	public CandyObject() {
-		
+		System.out.println("No candies given");
 	}
 	
 	public CandyObject(int noOfCandies) {

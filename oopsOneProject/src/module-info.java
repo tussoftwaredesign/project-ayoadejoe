@@ -1,9 +1,0 @@
-/**
- * 
- */
-/**
- * @author ayoadeprojects
- *
- */
-module oopsOneProject {
-}

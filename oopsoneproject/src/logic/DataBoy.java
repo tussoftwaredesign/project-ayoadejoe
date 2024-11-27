@@ -69,7 +69,7 @@ public class DataBoy {
 		return topics;
 	}
 	
-	protected ArrayList<JButton> getSubtopics(String subTopic){
+	public ArrayList<JButton> getSubtopics(String subTopic){
 		
 		return null;
 	}

@@ -127,7 +127,7 @@ public class ManeFrame extends JFrame implements ActionListener{
 	public void actionPerformed(ActionEvent action) {
 		switch(action.getActionCommand()) {
 			case "Data Type":
-				ArrayList<JLabel> labels = dataBoy.getTopic(action.getActionCommand());
+				ArrayList<JLabel> labels = dataBoy.getSubtopic(action.getActionCommand());
 				
 				if(labels.size()>0) {
 					

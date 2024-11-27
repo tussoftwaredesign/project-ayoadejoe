@@ -1,29 +1,53 @@
 ~Data Types
+topic notes
 -Numbers
-byte
-char
-int
-long
-float
-double
+subtopic notes
+*byte
+sub-subtopic notes
+*char
+sub-subtopic notes
+*int
+sub-subtopic notes
+*long
+sub-subtopic notes
+*float
+sub-subtopic notes
+*double
+sub-subtopic notes
 #
 ~Control
+topic notes
 -Decision
-if
-if-else
-if-else-if
-switch
+subtopic notes
+*if
+sub-subtopic notes
+*if-else
+sub-subtopic notes
+*if-else-if
+sub-subtopic notes
+*switch
+sub-subtopic notes
 -Loops
-while
-do-while
-For
-enhanced-For
+subtopic notes
+*while
+sub-subtopic notes
+*do-while
+sub-subtopic notes
+*For
+sub-subtopic notes
+*enhanced-For
+sub-subtopic notes
 -Jumps
-break
-continue
-return
+subtopic notes
+*break
+sub-subtopic notes
+*continue
+sub-subtopic notes
+*return
+sub-subtopic notes
 #
 ~Method
+topic notess
 heap
 stack
 static

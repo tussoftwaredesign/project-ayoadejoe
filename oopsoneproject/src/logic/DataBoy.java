@@ -17,6 +17,7 @@ public class DataBoy {
 	private Scanner scTopics, scNotes, scImages;
 	private ArrayList<String> contents = new ArrayList<>();
 	private TopicsInterface topicInterface;
+
 	
 	public DataBoy(TopicsInterface topicInterface) throws FileNotFoundException{
 		
@@ -26,35 +27,46 @@ public class DataBoy {
 		
 	}
 	
-	public ArrayList<JLabel> getTopic(String topic){
+	public ArrayList<JLabel> getTopic(){
 		
 		ArrayList<JLabel> topics = new ArrayList<>();
-		boolean checkIn = false;
+		boolean newtopic = false;
+		String topic="";
+		String subtopic = "";
+		String note = "";
 		if(contents != null && contents.size()>0) {
-			for(String line : contents) {
-				if (line.contains(topic.trim()) && line.contains("~"))
-					checkIn = true;
+			for(int i =0; i<contents.size(); i++) {
 				
-				if(line.trim().equals("#"))
-					checkIn = false;
+				String line = contents.get(i);
 				
-				if(checkIn) {
-					JLabel label = new JLabel(line);
-					label.addMouseListener(new MouseAdapter() {
-						@Override
-						public void mouseClicked(MouseEvent e) {
-							// TODO Auto-generated method stub
-							super.mouseClicked(e);
-						}
-					});
-					label.setName(line);
-					topics.add(label);
+				if(line.trim().equals("#"))newtopic = false;
+				
+				if (line.contains("~")) {//this is a topic
+					topic = line;
+					String topicnote = contents.get(i+1);
+					newtopic = true;
+					continue;
 				}
+				
+				if(newtopic && line.contains("-")) {
+					subtopic = line;
+					continue;
+				}
+				
+				if(newtopic && line.contains("*")) {
+					note = line;
+					continue;
+				}
+				
+				if(newtopic) {
+					
+				}
+
 				
 				
 			}
 		}	
-		return null;
+		return topics;
 	}
 	
 	protected ArrayList<JButton> getSubtopics(String subTopic){

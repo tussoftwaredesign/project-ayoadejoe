@@ -2,6 +2,7 @@
 topic notes
 -Numbers
 subtopic notes
+subtopic image
 *byte
 sub-subtopic notes
 *char
@@ -19,6 +20,7 @@ sub-subtopic notes
 topic notes
 -Decision
 subtopic notes
+subtopic image
 *if
 sub-subtopic notes
 *if-else
@@ -29,6 +31,7 @@ sub-subtopic notes
 sub-subtopic notes
 -Loops
 subtopic notes
+subtopic image
 *while
 sub-subtopic notes
 *do-while
@@ -39,57 +42,11 @@ sub-subtopic notes
 sub-subtopic notes
 -Jumps
 subtopic notes
+subtopic image
 *break
 sub-subtopic notes
 *continue
 sub-subtopic notes
 *return
 sub-subtopic notes
-#
-~Method
-topic notess
-heap
-stack
-static
-abstract
-local variable
-private
-default
-public
-#
-~String
-object
-pool
-immutability
-==
-equals
-#
-~StringBuilders
-object
-pool
-immutability
-==
-#
-~ArrayLists
-add
-get
-index
-contain
-#
-~Classes
-public
-default
-private
-#
-~Inheritance
--abstract class
-abstract
-extend
-is-a
-super
--interface
-interface
-implement
-default
-static
 #

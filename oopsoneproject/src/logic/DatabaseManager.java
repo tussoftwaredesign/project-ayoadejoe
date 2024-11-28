@@ -12,73 +12,49 @@ import javax.swing.JLabel;
 
 import interfaces.TopicsInterface;
 
-public class DataBoy {
+public class DatabaseManager {
 	
 	private Scanner scTopics, scNotes, scImages;
-	private ArrayList<String> contents = new ArrayList<>();
+	private ArrayList<String> topics = new ArrayList<>();
+	private ArrayList<String> notes = new ArrayList<>();
+	private ArrayList<String> images = new ArrayList<>();
 	private TopicsInterface topicInterface;
-
+	private Matryoshka matryoshka;
 	
-	public DataBoy(TopicsInterface topicInterface) throws FileNotFoundException{
+	public DatabaseManager(TopicsInterface topicInterface) throws FileNotFoundException, IllegalArgumentException{
 		
 		activateTopics(topicInterface);
 		activateNotes(topicInterface);
 		activateImages(topicInterface);
-		
+		if(topics != null) {
+			matryoshka = new Matryoshka(topics);		//Create objects of each topic by recursion because each topic has a subtopic
+			matryoshka.printTopics(matryoshka.getAllTopics(), 0);
+		}
 	}
 	
-	public ArrayList<JLabel> getTopic(){
-		
-		ArrayList<JLabel> topics = new ArrayList<>();
-		boolean newtopic = false;
-		String topic="";
-		String subtopic = "";
-		String note = "";
-		if(contents != null && contents.size()>0) {
-			for(int i =0; i<contents.size(); i++) {
-				
-				String line = contents.get(i);
-				
-				if(line.trim().equals("#"))newtopic = false;
-				
-				if (line.contains("~")) {//this is a topic
-					topic = line;
-					String topicnote = contents.get(i+1);
-					newtopic = true;
-					continue;
+	public Topic getSubTopics(String requestedTopic){
+		//get all the topics from Matryoshka
+		if(matryoshka != null) {
+			ArrayList<Topic> allTopics = matryoshka.getAllTopics();
+			
+			//for each main topic
+			for(Topic mainTopic : allTopics) {
+				if(mainTopic.getTitle().replace("~", "").trim().equals(requestedTopic)) {
+					System.out.println("Topic found:"+mainTopic.getTitle());
+					return mainTopic;
 				}
-				
-				if(newtopic && line.contains("-")) {
-					subtopic = line;
-					continue;
-				}
-				
-				if(newtopic && line.contains("*")) {
-					note = line;
-					continue;
-				}
-				
-				if(newtopic) {
-					
-				}
-
-				
-				
 			}
-		}	
-		return topics;
-	}
-	
-	public ArrayList<JButton> getSubtopics(String subTopic){
-		
+		}
 		return null;
 	}
+	
+
 	
 	private void activateTopics(TopicsInterface topicInterface) throws FileNotFoundException{
 		try {
 			scTopics = new Scanner(new File("Topics.selfie"));
 			while(scTopics.hasNextLine()) {
-				contents.add(scTopics.nextLine());
+				topics.add(scTopics.nextLine());
 			}
 			topicInterface.onComplete(true);
 		} catch (FileNotFoundException e) {
@@ -93,7 +69,7 @@ public class DataBoy {
 		try {
 			scNotes = new Scanner(new File("Notes.selfie"));
 			while(scNotes.hasNextLine()) {
-				contents.add(scNotes.nextLine());
+				notes.add(scNotes.nextLine());
 			}
 			topicInterface.onComplete(true);
 		} catch (FileNotFoundException e) {
@@ -108,7 +84,7 @@ public class DataBoy {
 		try {
 			scImages = new Scanner(new File("Images.selfie"));
 			while(scImages.hasNextLine()) {
-				contents.add(scImages.nextLine());
+				images.add(scImages.nextLine());
 			}
 			topicInterface.onComplete(true);
 		} catch (FileNotFoundException e) {

@@ -26,5 +26,11 @@ public class Topic {
         images.add(imagePath);
     }
 
-    // Additional methods as needed
+    public List<Topic> getSubtopics() {
+        return subtopics;
+    }
+
+    public String getTitle() {
+        return title;
+    }
 }

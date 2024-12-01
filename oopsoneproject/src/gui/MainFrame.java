@@ -1,15 +1,19 @@
 package gui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -17,19 +21,17 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.SwingUtilities;
+import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.LineBorder;
+import javax.swing.border.TitledBorder;
 
 import interfaces.TopicsInterface;
 import logic.DatabaseManager;
 import logic.Topic;
-import java.awt.GridLayout;
-import javax.swing.border.TitledBorder;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EtchedBorder;
-import java.awt.Color;
-import javax.swing.border.BevelBorder;
-import javax.swing.border.SoftBevelBorder;
-import javax.swing.border.LineBorder;
+import javax.swing.JTextPane;
 
 public class MainFrame extends JFrame implements ActionListener{
 
@@ -37,6 +39,12 @@ public class MainFrame extends JFrame implements ActionListener{
 	private static int resourcesLoaded = 0;
 	private static DatabaseManager dataManager;
 	private JPanel subtopicPanel = new JPanel();
+	private int rows =1, rowsub=2;
+	private JPanel subsubTopicPanel = new JPanel();
+	private String subHeader = "Sub-Topics", subsubHeader = "Sections";
+	private TitledBorder subTitleText = new TitledBorder(null, subHeader, TitledBorder.LEADING, TitledBorder.TOP, null, null);
+	private TitledBorder subsubTitleText = new TitledBorder(null, subsubHeader, TitledBorder.LEADING, TitledBorder.TOP, null, null);
+	private JTextPane textPane = new JTextPane();
 	
 	public static void main(String[] args) {
 
@@ -83,7 +91,7 @@ public class MainFrame extends JFrame implements ActionListener{
 		setContentPane(contentPane);
 		contentPane.setLayout(new BorderLayout(0, 0));
 		
-		JSplitPane splitPane = new JSplitPane();
+		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 		splitPane.setPreferredSize(new Dimension(200, 130));
 		contentPane.add(splitPane, BorderLayout.SOUTH);
 		
@@ -113,6 +121,7 @@ public class MainFrame extends JFrame implements ActionListener{
 		
 		
 		JButton btnStrings = new JButton("Strings");
+		btnStrings.setActionCommand("Strings");
 		btnStrings.setBackground(new Color(255, 248, 220));
 		btnStrings.setBorder(new LineBorder(new Color(255, 153, 51), 2, true));
 		btnStrings.addActionListener(this);
@@ -120,6 +129,7 @@ public class MainFrame extends JFrame implements ActionListener{
 		panelButtons.add(btnStrings);
 		
 		JButton btnStrgBuilder = new JButton("StringBuilders");
+		btnStrgBuilder.setActionCommand("StringBuilders");
 		btnStrgBuilder.setBackground(new Color(255, 248, 220));
 		btnStrgBuilder.setBorder(new LineBorder(new Color(255, 153, 51), 2, true));
 		btnStrgBuilder.addActionListener(this);
@@ -127,6 +137,7 @@ public class MainFrame extends JFrame implements ActionListener{
 		panelButtons.add(btnStrgBuilder);
 		
 		JButton btnArrayList = new JButton("ArrayLists");
+		btnArrayList.setActionCommand("ArrayLists");
 		btnArrayList.setBackground(new Color(255, 248, 220));
 		btnArrayList.setBorder(new LineBorder(new Color(255, 153, 51), 2, true));
 		btnArrayList.addActionListener(this);
@@ -134,82 +145,162 @@ public class MainFrame extends JFrame implements ActionListener{
 		panelButtons.add(btnArrayList);
 		
 		JButton btnClasses = new JButton("Classes");
+		btnClasses.setActionCommand("Classes");
 		btnClasses.setBackground(new Color(255, 248, 220));
 		btnClasses.setBorder(new LineBorder(new Color(255, 153, 51), 2, true));
 		btnClasses.addActionListener(this);
 		btnClasses.setPreferredSize(new Dimension(120, 80));
 		panelButtons.add(btnClasses);
 		
+		JButton btnMethods = new JButton("Method");
+		btnMethods.setActionCommand("Method");
+		btnMethods.setBackground(new Color(255, 248, 220));
+		btnMethods.setBorder(new LineBorder(new Color(255, 153, 51), 2, true));
+		btnMethods.addActionListener(this);
+		btnMethods.setPreferredSize(new Dimension(120, 80));
+		panelButtons.add(btnMethods);
+		
+		JButton btnInheritance = new JButton("Inheritance");
+		btnInheritance.setActionCommand("Inheritance");
+		btnInheritance.setBackground(new Color(255, 248, 220));
+		btnInheritance.setBorder(new LineBorder(new Color(255, 153, 51), 2, true));
+		btnInheritance.addActionListener(this);
+		btnInheritance.setPreferredSize(new Dimension(120, 80));
+		panelButtons.add(btnInheritance);
+		
 		JScrollPane scrollSubs = new JScrollPane();
-		subtopicPanel.setBackground(new Color(245, 255, 250));
-		subtopicPanel.setBorder(new CompoundBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), new TitledBorder(new EtchedBorder(EtchedBorder.LOWERED, new Color(255, 255, 255), new Color(160, 160, 160)), "Operations", TitledBorder.LEADING, TitledBorder.TOP, null, new Color(0, 0, 0))));
+		subtopicPanel.setBackground(new Color(255, 255, 240));
+		subtopicPanel.setBorder(new CompoundBorder(new EtchedBorder(EtchedBorder.LOWERED, null, null), subTitleText));
 		scrollSubs.setViewportView(subtopicPanel);
 		subtopicPanel.setPreferredSize(new Dimension(250, 100));
-		subtopicPanel.setLayout(new GridLayout(1, 0, 0, 0));
-		
+		//subtopicPanel.setLayout(new BoxLayout(subtopicPanel, BoxLayout.Y_AXIS));
+		subtopicPanel.setMinimumSize(new Dimension(500, 100));
+		 
+		JPanel notes = new JPanel();
+		notes.setLayout(new FlowLayout());
+        notes.add(new JLabel("Notes Panel"));
+        notes.setMinimumSize(new Dimension(50, 100));
+        
 		splitPane.setLeftComponent(scrollPane);
-		splitPane.setRightComponent(scrollSubs);
+		splitPane.setRightComponent(notes);
 		
-		splitPane.setDividerLocation(500);
+		splitPane.setResizeWeight(0.5);
+        splitPane.setDividerLocation(150); 
+		
+		JPanel centrePanel = new JPanel();
+		centrePanel.setLayout(new BorderLayout(0, 0));
+		
+		//subsubTopicPanel.setLayout(new BoxLayout(subsubTopicPanel, BoxLayout.X_AXIS));
+		//subsubTopicPanel.setMinimumSize(new Dimension(50, 400));
+		
+		JScrollPane subsubScroll = new JScrollPane();
+		subsubTopicPanel.setPreferredSize(new Dimension(200, 50));
+		subsubTopicPanel.setBorder(subsubTitleText);
+		subsubScroll.setViewportView(subsubTopicPanel);
+		subsubTopicPanel.setLayout(new GridLayout(rowsub, 0, 0, 0));
+		//subsubScroll.setMinimumSize(new Dimension(50, 400));
+		
+		centrePanel.add(subsubScroll, BorderLayout.WEST);
+		
+		contentPane.add(centrePanel, BorderLayout.CENTER);
+		
+		JPanel detailPanel = new JPanel();
+		centrePanel.add(detailPanel, BorderLayout.NORTH);
+		textPane.setBorder(new TitledBorder(null, "Details", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		textPane.setFont(new Font("Trebuchet MS", Font.PLAIN, 20));
+		textPane.setPreferredSize(new Dimension(50, 100));
+		
+		centrePanel.add(textPane, BorderLayout.SOUTH);
+		contentPane.add(scrollSubs, BorderLayout.WEST);
 		System.out.println("Working Now!");
+		
+		SwingUtilities.invokeLater(() -> {
+            int leftPreferred = subtopicPanel.getPreferredSize().width;
+            int rightPreferred = notes.getPreferredSize().width;
+            int totalWidth = leftPreferred + rightPreferred;
+
+            // Dynamically set the divider location
+            splitPane.setDividerLocation((double) leftPreferred / totalWidth);
+        });
 	}
 
 
 	
 	@Override
 	public void actionPerformed(ActionEvent action) {
-		
-		switch(action.getActionCommand()) {
-			case "Data Types":
-				subtopicPanel.removeAll();
-				//get the topic
-				Topic datatype = dataManager.getSubTopics(action.getActionCommand());
-				//split into subtopics
-				
-				if(datatype.getSubtopics().size()>0) {
-					List<Topic> subs = datatype.getSubtopics();
-					for(Topic sub : subs) {
-						JButton subtops = new JButton(sub.getTitle());
-						subtops.setBackground(new Color(235, 253, 220));
-						subtops.setBorder(new LineBorder(new Color(255, 253, 151), 2, true));
-						subtopicPanel.add(subtops);
-					}
-					
-					subtopicPanel.revalidate();
-					subtopicPanel.repaint();
-				}
-				
-				break;
-				
-			case "Control":
-				subtopicPanel.removeAll();
-				Topic control = dataManager.getSubTopics(action.getActionCommand());
-				//split into subtopics
-				if(control.getSubtopics().size()>0) {
-					List<Topic> subs = control.getSubtopics();
-					//System.out.println(subs);
-					for (Topic sub : subs) {
-				        // Skip sub-subtopics
-				        if (sub.getSubtopics() != null && !sub.getSubtopics().isEmpty()) {
-				        	JButton subtops = new JButton(sub.getTitle());
-				        	subtops.setBackground(new Color(225, 253, 230));
-							subtops.setBorder(new LineBorder(new Color(255, 253, 151), 2, true));
-					        subtopicPanel.add(subtops);
-					        System.out.println(sub.getTitle());
-				        }
-				    }
-						
-					subtopicPanel.revalidate();
-					subtopicPanel.repaint();
-				}
-				
-				break;
-				
-			default:
-				return;
-			
-		}
-		
+	    // Clear the subtopic panel before populating it
+	    subtopicPanel.removeAll();
+	    
+	    // Determine the main topic and process subtopics
+	    String actionCommand = action.getActionCommand();
+	    processMainTopic(actionCommand);
+
+	    // Revalidate and repaint the subtopic panel
+	   
+	    subTitleText.setTitle(actionCommand);
+	    subtopicPanel.setLayout(new GridLayout(rows, 0, 0, 0));
+	    subtopicPanel.revalidate();
+	    subtopicPanel.repaint();
+	    
+	}
+	
+	private void processMainTopic(String mainTopic) {
+	    // Fetch the topic data
+	    Topic topic = dataManager.getSubTopics(mainTopic);
+	    
+	    if(topic != null) {
+	    	textPane.setText(topic.getContent());
+	    if (topic.getSubtopics().size() > 0) {
+	        List<Topic> subtopics = topic.getSubtopics();
+	        rows = subtopics.size();
+	        for (Topic subtopic : subtopics) {
+	        	System.out.println(subtopic.getTitle());
+		        JButton subtopicButton = createSubtopicButton(subtopic.getTitle());
+		        subtopicButton.setActionCommand(subtopic.getTitle());
+		        
+		        subtopicButton.addActionListener((e)-> {
+		        	System.out.println(e.getActionCommand()+" clicked");
+		        	subsubTitleText.setTitle(e.getActionCommand());
+		        	processSubTopics(e.getActionCommand(), subtopic);
+		        });
+		        subtopicPanel.add(subtopicButton);
+	        	
+	        }
+	    }
+	    }
+	}
+	
+	
+	private void processSubTopics(String actionCommand, Topic subtopic) {
+		subsubTopicPanel.removeAll();
+		textPane.setText(subtopic.getContent());
+        List<Topic> subsubTopicArray = subtopic.getSubtopics();
+        if(subsubTopicArray.size()>0) {
+        	rowsub = subsubTopicArray.size();
+        	subsubTopicPanel.setLayout(new GridLayout(rowsub, 0, 0, 0));
+        	for(Topic subsub:subsubTopicArray) {
+	        	System.out.println(subsub.getTitle());
+        		JButton subsubButton = new JButton(subsub.getTitle());
+        		subsubButton.addActionListener((e)-> {
+		        	System.out.println(e.getActionCommand()+" clicked");
+		        	textPane.setText(subsub.getContent());
+		        });
+        		subsubTopicPanel.add(subsubButton);
+        	}
+        }
+        
+        subsubTopicPanel.revalidate();
+	    subsubTopicPanel.repaint();
+	}
+
+
+
+	private JButton createSubtopicButton(String title) {
+	    JButton button = new JButton(title);
+	    button.setBackground(new Color(255, 248, 220));
+	    button.setBorder(new LineBorder(new Color(255, 153, 51), 2, true));
+	    button.setFont(new Font("Cambria", Font.BOLD, 18));
+	    return button;
 	}
 
 

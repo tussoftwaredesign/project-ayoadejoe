@@ -33,4 +33,14 @@ public class Topic {
     public String getTitle() {
         return title;
     }
+
+	public String getContent() {
+		return content;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
+	}
+    
+    
 }

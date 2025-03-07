@@ -13,16 +13,19 @@ public class ClientConnect extends SwingWorker<Void, String> {
     private final String endDate;
     private final String outputFilePath;
     private final JTextArea logUpdate;
+    private final JLabel energyAvailable;
     private final JProgressBar progressBar;
     private final Runnable onDownloadComplete; // Callback function
+    private long totalBytesRead = 0;
 
     public ClientConnect(String urlString, String startDate, String endDate, String outputFilePath,
-                         JTextArea logUpdate, JProgressBar progressBar, Runnable onDownloadComplete) {
+                         JTextArea logUpdate, JLabel energyAvailable, JProgressBar progressBar, Runnable onDownloadComplete) {
         this.urlString = urlString;
         this.startDate = startDate;
         this.endDate = endDate;
         this.outputFilePath = outputFilePath;
         this.logUpdate = logUpdate;
+        this.energyAvailable = energyAvailable;
         this.progressBar = progressBar;
         this.onDownloadComplete = onDownloadComplete; // Store callback
     }
@@ -62,7 +65,7 @@ public class ClientConnect extends SwingWorker<Void, String> {
 
                     byte[] buffer = new byte[8192];
                     int bytesRead;
-                    long totalBytesRead = 0;
+                    totalBytesRead = 0;
                     long startTime = System.currentTimeMillis();
 
                     publish("Downloading CSV Data...");
@@ -109,6 +112,7 @@ public class ClientConnect extends SwingWorker<Void, String> {
                     }
 
                     publish("CSV file downloaded successfully: " + outputFilePath);
+                    energyAvailable.setText((int)(totalBytesRead/1000)+"MB CSV file downloaded");
                     setProgress(100);
                 }
             } else {
@@ -117,8 +121,13 @@ public class ClientConnect extends SwingWorker<Void, String> {
             conn.disconnect();
         } catch (IOException e) {
             publish("Error: " + e.getMessage());
+            e.printStackTrace();
         }
         return null;
+    }
+    
+    long getFileSize() {
+    	return totalBytesRead;
     }
 
     @Override

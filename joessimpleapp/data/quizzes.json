@@ -58,3 +58,24 @@
 {"question":"Which Part Of A Computer Is Responsible For Carrying Out Instructions?", "correctAnswer":"CPU", "category":"SCIENCE", "options":["RAM","Motherboard","Hard Drive","CPU"]}
 {"question":"How Many Children Did Queen Victoria Have?", "correctAnswer":"Nine", "category":"HISTORY", "options":["One","None","Three","Nine"]}
 {"question":"Who was the first US president born outside the orginal 13 states", "correctAnswer":"Abraham Lincoln", "category":"HISTORY", "options":["Barack Obama","John Adams","Abraham Lincoln","Ronald Reagan"]}
+{"question":"What Does A Chiropodist Treat", "correctAnswer":"Feet", "category":"SCIENCE", "options":["Teeth","Feet","Knees","Backs"]}
+{"question":"Who was the monarch of England during the time period 1399-1413?", "correctAnswer":"Henry IV", "category":"HISTORY", "options":["Charles I","George VI","Henry IV","George III"]}
+{"question":"Who was the 45th president of the USA, in term during the period 2017–2021?", "correctAnswer":"Donald J. Trump", "category":"HISTORY", "options":["James Monroe ","Benjamin Harrison","Donald J. Trump","George W. Bush"]}
+{"question":"What term refers to a condition of very small gravitational forces?", "correctAnswer":"Microgravity", "category":"SCIENCE", "options":["Microgravity","Zero gravity","Minigravity","Hypergravity"]}
+{"question":"Of which ship was Miles Standish captain?", "correctAnswer":"The Mayflower", "category":"HISTORY", "options":["HMS Victory","The Mayflower","The Santa Maria","The Mary Rose"]}
+{"question":"In 1945, which German city hosted the trials where former Nazi leaders were prosecuted for war crimes?", "correctAnswer":"Nuremberg", "category":"HISTORY", "options":["Frankfurt","Berlin","Munich","Nuremberg"]}
+{"question":"How was the 1839-42 Anglo-Chinese war better known ?", "correctAnswer":"The Opium War", "category":"HISTORY", "options":["The Mandarin War","The Hong Kong War","The Boxer Rebellion","The Opium War"]}
+{"question":"The 17th century saw the rise of which type of art movement?", "correctAnswer":"Baroque", "category":"HISTORY", "options":["Baroque","Impressionism","Cubism","Realism"]}
+{"question":"In what does a rhinologist specialise?", "correctAnswer":"The Human Nose", "category":"SCIENCE", "options":["The Human Nose","Rhinoceroses","Kidneys","The Moon"]}
+{"question":"In which year was the Iranian Revolution?", "correctAnswer":"1979", "category":"HISTORY", "options":["2002","1995","1979","1967"]}
+{"question":"How is the binary number '10' expressed as a decimal?", "correctAnswer":"2", "category":"SCIENCE", "options":["2","10","0","1"]}
+{"question":"Godfrey of Bouillon was a leader of the First Crusade and was elected ruler of what city after its capture?", "correctAnswer":"Jerusalem", "category":"HISTORY", "options":["Jerusalem","Rome","Istanbul","Alexandria"]}
+{"question":"What is Atmology the study of?", "correctAnswer":"Aqueous vapors", "category":"SCIENCE", "options":["Insects","The nervous system","Aqueous vapors","Weather"]}
+{"question":"What is Agrobiology the study of?", "correctAnswer":"Plant nutrition in relation to soil conditions", "category":"SCIENCE", "options":["Emetics","Plant nutrition in relation to soil conditions","Dreams","Existence"]}
+{"question":"Which dynasty ruled China from 1368- to 1644?", "correctAnswer":"Ming", "category":"HISTORY", "options":["Ming","Wu","Qing","Tang"]}
+{"question":"What is Oneirology the study of?", "correctAnswer":"dreams", "category":"SCIENCE", "options":["drug dosage","crop circles","dreams","the interrelationship between an organism's physical functioning and its environment"]}
+{"question":"Who was arrested in 1996 after years spent living in the wilderness as a wanted man?", "correctAnswer":"the Unabomber", "category":"HISTORY", "options":["the Unabomber","Jeffrey Dahmer","Ted Bundy","The Zodiac Killer"]}
+{"question":"Which city was burned by General Sherman in 1864?", "correctAnswer":"Atlanta", "category":"HISTORY", "options":["Columbus","Dallas","Atlanta","Houston"]}
+{"question":"What is the name of the physical law that states that energy is neither created or destroyed?", "correctAnswer":"Law of Conservation of Energy", "category":"SCIENCE", "options":["Law of Universal Gravitation","Law of the Lever","Law of Conservation of Energy","Law of Thermodynamics"]}
+{"question":"Aspirin was originally obtained from the bark of which tree?", "correctAnswer":"Willow", "category":"SCIENCE", "options":["Elm","Willow","Cypress","Birch"]}
+{"question":"What is a unit of computer memory equal to 1024 bytes?", "correctAnswer":"Kilobyte", "category":"SCIENCE", "options":["Terabyte","Gigabyte","Kilobyte","Megabyte"]}

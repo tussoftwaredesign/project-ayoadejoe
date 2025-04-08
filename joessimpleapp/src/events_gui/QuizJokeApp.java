@@ -41,6 +41,9 @@ import javax.swing.border.SoftBevelBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JSeparator;
 import java.awt.Component;
+import javax.swing.border.CompoundBorder;
+import java.awt.Toolkit;
+import javax.swing.ImageIcon;
 
 public class QuizJokeApp {
     private static JLabel questionLabel;
@@ -62,19 +65,27 @@ public class QuizJokeApp {
         SwingUtilities.invokeLater(() -> createAndShowGUI());
     }
 
-    /**
-     * @wbp.parser.entryPoint
-     */
+   
     private static void createAndShowGUI() {
-        JFrame frame = new JFrame("Quiz & Joke Game");
+        JFrame frame = new JFrame("Who wants to be a Knowledge Bank?");
+        frame.setIconImage(
+        	    Toolkit.getDefaultToolkit().getImage(
+        	        QuizJokeApp.class.getClassLoader().getResource("data/wwtbakbsmall.png")
+        	    )
+        	);
+
         frame.getContentPane().setBackground(new Color(255, 153, 204));
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(700, 500);
-        frame.getContentPane().setLayout(new BorderLayout(10, 10));
+        JPanel paddedContent = new JPanel(new BorderLayout(10, 10));
+        paddedContent.setBorder(new CompoundBorder(new LineBorder(new Color(255, 153, 102)), new EmptyBorder(15, 15, 15, 15))); // top, left, bottom, right
+        paddedContent.setBackground(new Color(255, 153, 204)); 
+        frame.setContentPane(paddedContent);
+
 
         optionsPanel = new JPanel();
         optionsPanel.setBackground(new Color(255, 255, 204));
-        frame.getContentPane().add(optionsPanel, BorderLayout.CENTER);
+        paddedContent.add(optionsPanel, BorderLayout.CENTER);
         optionsPanel.setLayout(new GridLayout(4, 0, 0, 0));
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
@@ -92,24 +103,31 @@ public class QuizJokeApp {
         southPanel.setBackground(new Color(255, 153, 204));
         southPanel.add(buttonPanel, BorderLayout.NORTH);
         southPanel.add(jokeLabel, BorderLayout.SOUTH);
-        frame.getContentPane().add(southPanel, BorderLayout.SOUTH);
+        paddedContent.add(southPanel, BorderLayout.SOUTH);
         southPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         
         northPanel = new JPanel();
         northPanel.setBackground(new Color(255, 153, 204));
-        frame.getContentPane().add(northPanel, BorderLayout.NORTH);
-                        northPanel.setLayout(new BorderLayout(0, 0));
-                
-                        questionLabel = new JLabel("Loading question...", SwingConstants.CENTER);
-                        northPanel.add(questionLabel);
-                        questionLabel.setFont(new Font("Chalkduster", Font.BOLD, 20));
+        paddedContent.add(northPanel, BorderLayout.NORTH);
+        northPanel.setLayout(new BorderLayout(0, 0));
+        questionLabel = new JLabel("Loading question...", SwingConstants.CENTER);
+        northPanel.add(questionLabel);
+        questionLabel.setFont(new Font("Comic Sans MS", Font.BOLD, 20));
+        
+        lblNewLabel_1 = new JLabel("");
+        lblNewLabel_1.setIcon(new ImageIcon(
+        	    Toolkit.getDefaultToolkit().getImage(
+            	        QuizJokeApp.class.getClassLoader().getResource("data/wwtbakbsmall.png")
+            	    ))
+            	);
+        northPanel.add(lblNewLabel_1, BorderLayout.WEST);
 
 
         submitButton.addActionListener(QuizJokeApp::handleSubmit);
         nextButton.addActionListener(e -> loadQuiz());
         
         eastPanel = new JPanel();
-        frame.getContentPane().add(eastPanel, BorderLayout.EAST);
+        paddedContent.add(eastPanel, BorderLayout.EAST);
         eastPanel.setPreferredSize(new Dimension(200, 10));
         eastPanel.setLayout(new BorderLayout(0, 0));
         
@@ -121,11 +139,11 @@ public class QuizJokeApp {
         scoreLabel = new JLabel("Score: 0/0 (0%)", SwingConstants.CENTER);
         scoreLabel.setFont(new Font("Comic Sans MS", Font.PLAIN, 14));
         scoreLabel.setForeground(new Color(0, 0, 0));
-        scoreLabel.setBorder(new EmptyBorder(0, 0, 0, 0));
+        scoreLabel.setBorder(new LineBorder(new Color(255, 153, 255), 1, true));
         scoreLabel.setBackground(new Color(255, 153, 204));
         categoryLabel = new JLabel("Category: N/A", SwingConstants.CENTER);
         categoryLabel.setForeground(new Color(0, 51, 102));
-        categoryLabel.setBorder(new EmptyBorder(0, 0, 0, 0));
+        categoryLabel.setBorder(new LineBorder(new Color(255, 153, 255)));
         categoryLabel.setBackground(new Color(255, 153, 204));
         infoPanel.setLayout(new GridLayout(2, 1, 0, 5));
         infoPanel.add(scoreLabel);
@@ -168,6 +186,7 @@ public class QuizJokeApp {
             radio.setFont(new Font("Calibri", Font.PLAIN, 16));
             radio.setActionCommand(option);
             radio.setHorizontalAlignment(SwingConstants.CENTER);
+            radio.setBackground(new Color(255, 255, 204));
             answerGroup.add(radio);
             optionsPanel.add(radio);
         }
@@ -213,6 +232,7 @@ public class QuizJokeApp {
     private static JPanel northPanel;
     private static JLabel lblNewLabel;
     private static JPanel eastPanel;
+    private static JLabel lblNewLabel_1;
 
     
 }

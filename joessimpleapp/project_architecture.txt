@@ -1,0 +1,166 @@
+Architecture Document: Quiz & Joke Game (Java Swing Application)
+
+1. Overview
+The Quiz & Joke Game is a desktop application built with Java Swing that delivers a fun and educational experience. Users are presented with quiz questions. Upon answering correctly, they are rewarded with a joke fetched live from the web. If incorrect, a humorous or sarcastic joke is still shown. The application supports asynchronous data fetching, offline caching, enums, score tracking, and a modular design leveraging core Java features.
+
+2. Technologies Used
+
+Java 21
+
+Swing (UI)
+
+HttpClient (Java 11+)
+
+JSON (org.json library)
+
+Java NIO (File operations)
+
+Executors / ThreadPool
+
+Generics, Functional Interfaces, Records, Enums
+
+Streams API, Predicate, Function, Supplier, Consumer
+
+3. Key Functional Components
+
+3.1 UI Layer (QuizJokeApp.java)
+
+Uses SwingUtilities.invokeLater() for EDT-safe UI init
+
+GUI Layout includes:
+
+JLabel for quiz questions
+
+JRadioButton group for answer options
+
+JButtons for Submit and Next
+
+JLabel for joke/feedback area
+
+JLabel for score tracking and category display
+
+Buttons are stylized with custom colors and rounded edges
+
+3.2 Async Fetching Layer (AsyncFetcher.java)
+
+Generic class AsyncFetcher<T>
+
+Executes Supplier<T> task in background
+
+Callback with Consumer<T> on EDT
+
+Used for both quizzes and jokes
+
+3.3 Data Models (Records)
+
+record QuizData(String question, List<String> options, String correctAnswer, QuizCategory category)
+
+record JokeData(String setup, String delivery)
+
+3.4 Enumerations
+
+QuizCategory enum classifies quiz questions (HISTORY, SCIENCE, etc.)
+
+JokeType reserved for future joke classification
+
+3.5 API Integration
+
+QuizFetcher.java fetches from The Trivia API
+
+JokeFetcher.java fetches from JokeAPI
+
+Uses Java 11+ HttpClient and JSON parsing with org.json
+
+3.6 File Storage and Loading (DataSaver.java)
+
+Generic class DataSaver<T> handles:
+
+Saving (appendOne)
+
+Loading (loadAll)
+
+Uses Function<T, String> and Function<String, T>
+
+Stored in /data/ folder as JSON lines
+
+NIO-based using Files.writeString, Files.lines
+
+3.7 Score Tracking (ScoreTracker.java)
+
+Tracks total attempts, correct answers, and accuracy
+
+Displays formatted score summary in GUI
+
+Logic lives in ScoreTracker class with clean API
+
+3.8 Filtering and Classification
+
+In-memory filtering using Predicate<T>
+
+Example: filter science-related quizzes
+
+Stream API for category grouping, aggregation, etc.
+
+4. Application Flow
+
+On launch:
+
+Loads quizzes and jokes from files using mappers
+
+Initializes UI components
+
+Displays score label (initially 0)
+
+Fetches new content in background via ExecutorService
+
+Updates UI and file cache
+
+User selects an answer:
+
+Compares it to correctAnswer
+
+Updates score tracker and shows joke depending on correctness
+
+Saves fetched joke to disk
+
+Displays updated score and quiz category badge
+
+User clicks Next:
+
+Loads a new quiz from live API or filtered list
+
+5. Java Concepts Demonstrated
+
+OOP: Modular classes, single-responsibility design
+
+Generics: AsyncFetcher<T>, DataSaver<T>
+
+Functional Interfaces: Function, Predicate, Supplier, Consumer
+
+Concurrency: ExecutorService for non-blocking IO
+
+Java Records: Simplified immutable data holders
+
+Enums: Strong typing for categories, with fallback mapping
+
+Streams API: Loading, filtering, mapping, grouping
+
+NIO: Efficient file handling for storage and retrieval
+
+6. Future Improvements
+
+Add ForkJoin tasks for deep filtering or bulk transformation
+
+Add quiz score charts or historical tracking
+
+Add category-based quiz/game modes
+
+Add optional GUI enhancements: timers, avatars, sound effects
+
+Support JSON deserialization via Jackson or Gson for robustness
+
+7. Author & Purpose
+This application was designed by an experienced Java developer to demonstrate mastery of OCPJP-level concepts while creating an engaging user experience. The architecture promotes reusability, testability, and async performance.
+
+End of Document
+

@@ -28,7 +28,7 @@ public class DatabaseManager {
 		activateImages(topicInterface);
 		if(topics != null) {
 			matryoshka = new Matryoshka(topics);		//Create objects of each topic by recursion because each topic has a subtopic
-			matryoshka.printTopics(matryoshka.getAllTopics(), 0);
+			//matryoshka.printTopics(matryoshka.getAllTopics(), 0);
 		}
 	}
 	
@@ -54,8 +54,11 @@ public class DatabaseManager {
 		try {
 			scTopics = new Scanner(new File("Topics.selfie"));
 			while(scTopics.hasNextLine()) {
-				topics.add(scTopics.nextLine());
+				String line = scTopics.nextLine().trim();
+				line = line.replace("\u00A0", "").replace("\uFEFF", ""); // Remove non-breaking space and BOM
+				topics.add(line);
 			}
+			//System.out.println(topics);
 			topicInterface.onComplete(true);
 		} catch (FileNotFoundException e) {
 			topicInterface.onComplete(false);

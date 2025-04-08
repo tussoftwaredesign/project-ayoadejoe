@@ -22,8 +22,9 @@ public class Matryoshka {
 		if(topicsFileList != null && topicsFileList.size()>0) {
 			while(i.i < topicsFileList.size()) {
 				
-				String line = topicsFileList.get(i.i);
-				
+				String line = topicsFileList.get(i.i).trim();
+				line = line.replace("\u00A0", "").replace("\uFEFF", ""); // Remove non-breaking space and BOM
+				//System.out.println(line);
 				if(line.trim().equals("#")) {
 					newtopic = false;
 					//add the topic just concluded into the array
@@ -35,12 +36,15 @@ public class Matryoshka {
 					
 				}else if (line.contains("~")) {//this is a topic
 					 loadTopic(line, topicsFileList, i);
+					 System.out.println(line);
 			         newtopic = true;
 			         
-				}else if(newtopic && line.contains("-")) {
+				}else if(newtopic && line.contains(">")) {
+					System.out.println(line);
 					loadSubtopic(line, topicsFileList, i);
 					
-				}else if(newtopic && line.contains("*")) {
+				}else if(newtopic && line.contains("**")) {
+					System.out.println(line);
 					loadSubSubtopic(line, topicsFileList, i);
 				}
 				i.i++;

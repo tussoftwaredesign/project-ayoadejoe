@@ -1,52 +1,161 @@
 ~Data Types
-topic notes
--Numbers
-subtopic notes
+Data types define the kind of data a variable can store and the operations that can be performed on it. Some types are used for whole numbers, others for decimals or characters. Mixing data types may lead to loss of precision or data truncation.
+>Numbers
+Numbers are used to store numeric values in variables.
 subtopic image
-*byte
-sub-subtopic notes
-*char
-sub-subtopic notes
-*int
-sub-subtopic notes
-*long
-sub-subtopic notes
-*float
-sub-subtopic notes
-*double
-sub-subtopic notes
+**byte
+Byte is the smallest data type for whole numbers. It takes 1 byte of memory and can store numbers from -128 to 127.
+**char
+Char is used to store a single character like 'A' or '1'. It takes 2 bytes of memory.
+**int
+Int is used for whole numbers. It takes 4 bytes of memory and can store numbers from -2 billion to 2 billion.
+**long
+Long is for very large whole numbers. It takes 8 bytes of memory and is used when int is not enough.
+**float
+Float is used for decimal numbers like 3.14. It takes 4 bytes of memory and stores numbers with lower precision.
+**double
+Double is used for decimal numbers too, but with higher precision than float. It takes 8 bytes of memory.
 #
 ~Control
-topic notes
--Decision
-subtopic notes
+Control statements guide the flow of execution in a program. They include decision-making, loops, and jumps.
+>Decision
+Decision-making statements allow conditional execution of code blocks.
 subtopic image
-*if
-sub-subtopic notes
-*if-else
-sub-subtopic notes
-*if-else-if
-sub-subtopic notes
-*switch
-sub-subtopic notes
--Loops
-subtopic notes
+**if
+Executes a block of code only if a condition is true.
+**if-else
+Executes one block of code if a condition is true, and another if it is false.
+**if-else-if
+Allows multiple conditions to be checked in sequence.
+**switch
+Tests a variable against multiple values and executes the matching case.
+>Loops
+Loops are used for repeated execution of code.
 subtopic image
-*while
-sub-subtopic notes
-*do-while
-sub-subtopic notes
-*For
-sub-subtopic notes
-*enhanced-For
-sub-subtopic notes
--Jumps
-subtopic notes
+**while
+Executes a block of code as long as a condition is true.
+**do-while
+Executes the block at least once, then continues while the condition is true.
+**for
+Iterates a block of code a fixed number of times.
+**enhanced-for
+Iterates through elements in a collection or array.
+>Jumps
+Jump statements interrupt or control the flow of loops and conditions.
 subtopic image
-*break
-sub-subtopic notes
-*continue
-sub-subtopic notes
-*return
-sub-subtopic notes
+**break
+Exits the current loop or switch case.
+**continue
+Skips the current iteration and moves to the next.
+**return
+Exits from a method and optionally returns a value.
+#
+~Strings
+String objects store sequences of characters. Strings are immutable, meaning they cannot be changed once created.
+>Object
+Strings are objects in Java, created using the String class.
+subtopic image
+>Pool
+Strings are stored in a special pool to optimize memory.
+subtopic image
+>Immutability
+String objects cannot be changed; operations create new strings.
+subtopic image
+>Comparison
+Strings are compared using methods.
+subtopic image
+**==
+Checks if two string references point to the same object.
+**equals
+Checks if two strings have the same content.
+#
+~StringBuilders
+StringBuilder is used for mutable strings, allowing modifications without creating new objects.
+>Object
+StringBuilder objects are created using the StringBuilder class.
+subtopic image
+>Pool
+StringBuilder does not use the string pool.
+subtopic image
+>Mutability
+StringBuilder allows in-place modifications of strings.
+subtopic image
+#
+~ArrayLists
+ArrayLists are dynamic arrays that grow or shrink as needed.
+>ArrayList Methods
+ArrayLists provide methods for managing elements.
+subtopic image
+**add
+Adds an element to the ArrayList.
+**get
+Retrieves an element at a specified index.
+**index
+Returns the index of a specific element.
+**contain
+Checks if an element exists in the ArrayList.
+#
+~Classes
+Classes are blueprints for creating objects. They define properties and methods.
+>Access Modifiers
+Control the visibility of classes.
+subtopic image
+**public
+Accessible from anywhere.
+**default
+Accessible within the same package.
+**private
+Not allowed for top-level classes.
+#
+~Method
+Methods define reusable blocks of code that perform specific tasks.
+>Heap
+Heap memory stores dynamically allocated objects and variables.
+subtopic image
+>Stack
+Stack memory stores method calls and local variables.
+subtopic image
+>Static Methods
+Static methods belong to the class, not instances.
+subtopic image
+>Abstract Methods
+Abstract methods have no body and must be implemented in derived classes.
+subtopic image
+>Local Variables
+Local variables exist only within a method and are discarded after it ends.
+subtopic image
+>Access Modifiers
+Control the visibility of methods.
+subtopic image
+**private
+The method would only be accessible only within the same class.
+**default
+Accessible within the same package.
+**public
+Accessible from anywhere.
+#
+~Inheritance
+Inheritance allows a class to acquire properties and behaviors of another class.
+>Abstract Class
+Abstract classes provide a base for other classes.
+subtopic image
+**abstract
+Defines abstract methods for subclasses to implement.
+**extend
+Keyword used to inherit from a class.
+**is-a
+Relationship indicating inheritance.
+**super
+Refers to the parent class.
+>Interface
+Interfaces define contracts that classes must fulfill.
+subtopic image
+**interface
+Defines methods to be implemented by classes.
+**implement
+Keyword used to fulfill interface requirements.
+**default
+Allows methods with a default body in interfaces.
+**static
+Defines methods callable without creating an instance.
 #

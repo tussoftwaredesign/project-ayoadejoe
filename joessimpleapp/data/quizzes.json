@@ -197,3 +197,6 @@
 {"question":"Who Shot Lee Harvey Oswald, The Assassin Of John F Kennedy?", "correctAnswer":"Jack Ruby", "category":"HISTORY", "options":["Jack Ruby","Tom Gunn","Alvin Grey","Mark Bench"]}
 {"question":"During World War I, which strait between the Aegean and the Sea of Marmara was unsuccessfully contested by the Allies in 1915?", "correctAnswer":"The Dardanelles", "category":"HISTORY", "options":["The English Channel","The Dardanelles","The Bering Strait","The Panama Canal"]}
 {"question":"What name was given to the Allied invasion of North Africa in 1942?", "correctAnswer":"Operation Torch", "category":"HISTORY", "options":["Operation Blitz","Operation Enterprise","Operation Torch","Operation Market Garden"]}
+{"question":"What type of rocks are created by the cooling and hardening of lava or magma?", "correctAnswer":"Igneous Rocks", "category":"SCIENCE", "options":["Fossils","Metamorphic Rocks","Igneous Rocks","Sedimentary Rocks"]}
+{"question":"What is the lowest common multiple of 3, 4 and 5?", "correctAnswer":"60", "category":"SCIENCE", "options":["20","30","60","12"]}
+{"question":"The teeth used for biting or cutting are known as _______.", "correctAnswer":"Incisors", "category":"SCIENCE", "options":["Molars","Premolars","Incisors","Slicers"]}

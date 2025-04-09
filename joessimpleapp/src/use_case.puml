@@ -1,0 +1,31 @@
+@startuml
+
+left to right direction
+skinparam packageStyle rectangle
+skinparam handwritten false
+skinparam actorStyle awesome
+
+actor Player
+actor Internet
+
+rectangle "Who Wants to Be a Knowledge Bank?" {
+
+  Player --> (Start Quiz Session)
+  Player --> (Answer Question)
+  Player --> (Receive Joke Reward)
+  Player --> (See Score Statistics)
+  Player --> (Toggle Online/Offline)
+  Player --> (View Score History)
+  Player --> (Choose Category)
+
+  (Start Quiz Session) --> (Fetch Quiz)
+  (Receive Joke Reward) --> (Fetch Joke)
+  (View Score History) --> (Load ScoreNode Tree)
+  (Toggle Online/Offline) --> (Check Internet)
+
+  Internet --> (Check Internet)
+  Internet --> (Fetch Quiz)
+  Internet --> (Fetch Joke)
+}
+
+@enduml

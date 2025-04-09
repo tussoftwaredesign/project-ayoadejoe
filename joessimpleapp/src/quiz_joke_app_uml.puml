@@ -1,0 +1,107 @@
+@startuml
+
+title UML Class Diagram - "Who Wants to Be a Knowledge Bank?"
+
+' === Core Records ===
+class QuizData {
+  - question: String
+  - options: List<String>
+  - correctAnswer: String
+  - category: QuizCategory
+}
+
+class JokeData {
+  - setup: String
+  - delivery: String
+}
+
+enum QuizCategory {
+  HISTORY
+  SCIENCE
+  ART
+  GENERAL
+  ERROR
+}
+
+enum JokeType {
+  PUN
+  DARK
+  MISC
+  PROGRAMMING
+  ANY
+}
+
+class ScoreTracker {
+  - totalAttempts: int
+  - correctAnswers: int
+  + recordAttempt(correct: boolean)
+  + getAccuracy(): double
+}
+
+class ScoreNode {
+  - playerName: String
+  - dateTime: LocalDateTime
+  - score: int
+  - total: int
+  - next: ScoreNode
+  + printHistory(area: JTextArea, i: int)
+}
+
+' === Utility Classes ===
+class AsyncFetcher<T> {
+  - executor: ExecutorService
+  + fetch(Supplier<T>, Consumer<T>)
+}
+
+class DataSaver<T> {
+  - filePath: Path
+  - toJsonMapper: Function<T, String>
+  - fromJsonMapper: Function<String, T>
+  + appendOne(T)
+  + loadAll(): List<T>
+}
+
+class QuizFetcher {
+  + fetchQuiz(): QuizData
+}
+
+class JokeFetcher {
+  + fetchJoke(): JokeData
+}
+
+class InternetChecker {
+  + hasInternet(): boolean
+}
+
+class ScoreStorageMultiUser {
+  + saveAll(Map<String, ScoreNode>)
+  + loadAll(): Map<String, ScoreNode>
+}
+
+class QuizJokeApp {
+  - currentQuiz: QuizData
+  - scoreTracker: ScoreTracker
+  - offlineQuizzes: List<QuizData>
+  - offlineJokes: List<JokeData>
+  - allHistories: Map<String, ScoreNode>
+}
+
+QuizJokeApp --> QuizData
+QuizJokeApp --> JokeData
+QuizJokeApp --> ScoreTracker
+QuizJokeApp --> ScoreNode
+QuizJokeApp --> QuizFetcher
+QuizJokeApp --> JokeFetcher
+QuizJokeApp --> DataSaver
+QuizJokeApp --> AsyncFetcher
+QuizJokeApp --> InternetChecker
+QuizJokeApp --> ScoreStorageMultiUser
+
+QuizData --> QuizCategory
+JokeData --> JokeType
+QuizFetcher --> QuizData
+JokeFetcher --> JokeData
+ScoreNode --> ScoreNode : next
+ScoreStorageMultiUser --> ScoreNode
+
+@enduml

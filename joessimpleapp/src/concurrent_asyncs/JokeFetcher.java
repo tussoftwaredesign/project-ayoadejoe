@@ -8,7 +8,7 @@ import record_pojos.JokeData;
 
 public class JokeFetcher {
 
-    private static final String JOKE_API = "https://v2.jokeapi.dev/joke/Any?type=twopart";
+    private static final String JOKE_API = "https://v2.jokeapi.dev/joke/Any?blacklistFlags=racist,sexist,explicit";
 
     public static JokeData fetchJoke() {
         try {
@@ -19,6 +19,7 @@ public class JokeFetcher {
                 .build();
 
             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            System.out.println(response.body());
             JSONObject obj = new JSONObject(response.body());
 
             String setup = obj.getString("setup");
@@ -28,6 +29,7 @@ public class JokeFetcher {
 
         } catch (Exception e) {
             System.err.println("Joke fetch error: " + e.getMessage());
+            e.printStackTrace();
             return new JokeData("Oops...", "Couldn't fetch joke!");
         }
     }

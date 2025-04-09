@@ -18,7 +18,7 @@ public class ScoreTracker {
 
     @Override
     public String toString() {
-        return "Score: " + correctAnswers + "/" + totalAttempts +
+        return  correctAnswers + "/" + totalAttempts +
                " (" + String.format("%.1f", getAccuracy()) + "%)";
     }
 }

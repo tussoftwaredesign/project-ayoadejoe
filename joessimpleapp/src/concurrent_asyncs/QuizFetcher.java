@@ -20,6 +20,12 @@ public class QuizFetcher {
 
     private static final String QUIZ_API = "https://the-trivia-api.com/v2/questions?categories=history,science&limit=5";
     
+    /**
+     * Fetches a quiz from the Trivia API.
+     * 
+     * @return a QuizData record with the loaded question and options
+     */
+    //Supplier-style takes nothing returns a record
     public static QuizData fetchQuiz() {
         try {
             HttpClient client = HttpClient.newHttpClient();
@@ -43,10 +49,10 @@ public class QuizFetcher {
             options.add(correct);
             Collections.shuffle(options);
             
+            //hard-wire the category using enums
             QuizCategory category = QuizCategory.fromString(obj.getString("category"));
             
             QuizData quizData = new QuizData(question, options, correct, category);
-            quizSaver.appendOne(quizData); 
             
             return quizData;
 
@@ -56,29 +62,5 @@ public class QuizFetcher {
         }
     }
     
-    private static final DataSaver<QuizData> quizSaver = new DataSaver<>(
-    	    "quizzes.json",
-    	    quiz -> String.format(
-    	        "{\"question\":\"%s\", \"correctAnswer\":\"%s\", \"category\":\"%s\", \"options\":%s}",
-    	        quiz.question(), quiz.correctAnswer(), quiz.category(), new JSONArray(quiz.options())
-    	    ),
-    	    line -> {
-    	        try {
-    	            JSONObject obj = new JSONObject(line);
-    	            String question = obj.getString("question");
-    	            String correct = obj.getString("correctAnswer");
-    	            QuizCategory category = QuizCategory.fromString(obj.getString("category"));
 
-    	            JSONArray optionsArray = obj.getJSONArray("options");
-    	            List<String> options = new ArrayList<>();
-    	            for (int i = 0; i < optionsArray.length(); i++) {
-    	                options.add(optionsArray.getString(i));
-    	            }
-
-    	            return new QuizData(question, options, correct, category);
-    	        } catch (Exception e) {
-    	            return new QuizData("Parsing error", List.of(), "", null);
-    	        }
-    	    }
-    	);
 }

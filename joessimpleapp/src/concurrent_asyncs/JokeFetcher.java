@@ -6,7 +6,8 @@ import org.json.JSONObject;
 
 import record_pojos.JokeData;
 
-public class JokeFetcher {
+
+public class JokeFetcher extends AbstractFetcher<JokeData>{
 
     private static final String JOKE_API = "https://v2.jokeapi.dev/joke/Any?blacklistFlags=racist,sexist,explicit";
 
@@ -33,4 +34,15 @@ public class JokeFetcher {
             return new JokeData("Oops...", "Couldn't fetch joke!");
         }
     }
+    
+    /**
+     * Fetches a joke from the Jokeapi API.
+     * 
+     * @return a JokeData record with the loaded question and options
+     */
+
+	@Override
+	public JokeData fetch() {
+		  return new JokeFetcher().fetch();
+	}
 }

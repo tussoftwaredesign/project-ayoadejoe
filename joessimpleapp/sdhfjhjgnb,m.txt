@@ -1,0 +1,179 @@
+package com.watts_ahead.watts;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
+
+import java.io.BufferedReader;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+@Service
+public class Sync_PowerBase_Timer {
+    private final AtomicBoolean isRunning = new AtomicBoolean(false);
+    private final Stage1CleanDataRepository repository;
+    private final RestTemplate restTemplate;
+    private static final Logger logger = LoggerFactory.getLogger(Sync_PowerBase_Timer.class);
+    private static final String RAW_CSV_PATH = "/home/ec2-user/stage1_raw.csv";
+    private static final int BATCH_SIZE = 100; // Adjust based on memory constraints
+
+    @Autowired
+    public Sync_PowerBase_Timer(Stage1CleanDataRepository repository, RestTemplate restTemplate) {
+        this.repository = repository;
+        this.restTemplate = restTemplate;
+    }
+
+    public void start() {
+        isRunning.set(true);
+        System.out.println("Sync service started.");
+    }
+
+    public void stop() {
+        isRunning.set(false);
+        System.out.println("Sync service stopped.");
+    }
+
+    public boolean isRunning() {
+        return isRunning.get();
+    }
+
+    @Scheduled(fixedRate = 15 * 60 * 1000)
+    @Transactional
+    public void scheduledSync() {
+        if (isRunning.get()) {
+            System.out.println("Triggered sync at: " + LocalTime.now());
+            LocalDateTime lastTime = repository.findLatestTime();
+            LocalDateTime startTime = lastTime != null ? lastTime.plusMinutes(1) : LocalDateTime.of(2025, 1, 1, 0, 0);
+            fetchAndSync(startTime);
+        }
+    }
+
+    private void fetchAndSync(LocalDateTime startTime) {
+        try {
+            // Build the URL with encoded parameters
+            String encodedStartTime = URLEncoder.encode(startTime.toString(), StandardCharsets.UTF_8);
+            String encodedEndTime = URLEncoder.encode(LocalDateTime.now().toString(), StandardCharsets.UTF_8);
+            String url = "http://eucalyptus.iq-joy.com/joseph1/historical_power.php?start_date=" + encodedStartTime + "&end_date=" + encodedEndTime;
+            System.out.println("Fetching data from: " + url);
+
+            // Use RestTemplate to get the response as a stream
+            ResponseEntity<InputStreamResource> response = restTemplate.getForEntity(url, InputStreamResource.class);
+
+            if (response.getStatusCode().is2xxSuccessful()) {
+                // Stream the CSV response to stage1_raw.csv
+                try (InputStream inputStream = response.getBody().getInputStream();
+                     FileOutputStream fileOutputStream = new FileOutputStream(RAW_CSV_PATH)) {
+                    byte[] buffer = new byte[8192];
+                    int bytesRead;
+                    while ((bytesRead = inputStream.read(buffer)) != -1) {
+                        fileOutputStream.write(buffer, 0, bytesRead);
+                    }
+                    System.out.println("CSV downloaded to: " + RAW_CSV_PATH);
+                }
+
+                // Process the CSV and upsert to database
+                //processAndSaveCsv();
+            } else {
+                System.out.println("Failed to fetch CSV. Status: " + response.getStatusCode());
+            }
+        } catch (Exception e) {
+            System.out.println("Error during sync: " + e.getMessage());
+        }
+    }
+
+    @Transactional
+    protected void processAndSaveCsv() throws IOException {
+        List<Stage1CleanEntity> batch = new ArrayList<>(BATCH_SIZE);
+        try (BufferedReader reader = Files.newBufferedReader(Paths.get(RAW_CSV_PATH))) {
+            String header = reader.readLine(); // Skip header
+            System.out.println("Header skipped: " + header);
+
+            String line;
+            Stage1CleanEntity lastRecord = null;
+            while ((line = reader.readLine()) != null) {
+                // Simulate DuplicateCleaner logic (replace with your actual cleaning pipeline)
+                Stage1CleanEntity record = cleanRow(line, lastRecord);
+                if (record != null) { // Only add if it's a valid record to save
+                    batch.add(record);
+                    lastRecord = record;
+                }
+
+                // Save batch when full
+                if (batch.size() >= BATCH_SIZE) {
+                    repository.saveAll(batch);
+                    System.out.println("Saved batch of " + batch.size() + " records");
+                    batch.clear();
+                }
+            }
+
+            // Save any remaining records
+            if (!batch.isEmpty()) {
+                repository.saveAll(batch);
+                System.out.println("Saved final batch of " + batch.size() + " records");
+            }
+        }
+        System.out.println("CSV processing and database sync completed");
+    }
+
+    // Placeholder for your cleaning pipeline, including DuplicateCleaner logic
+    private Stage1CleanEntity cleanRow(String row, Stage1CleanEntity lastRecord) {
+        // Parse the CSV row (replace with your PowerRecord logic)
+        String[] fields = row.split(",");
+        LocalDateTime currentTime = LocalDateTime.parse(fields[2]); // Assuming time is 3rd column
+
+        // Simulate DuplicateCleaner: skip if duplicate minute and not preferred device
+        if (lastRecord != null && currentTime.truncatedTo(java.time.temporal.ChronoUnit.MINUTES)
+                .equals(lastRecord.getTime().truncatedTo(java.time.temporal.ChronoUnit.MINUTES))) {
+            String currentDevice = fields[1]; // Assuming deviceid is 2nd column
+            String lastDevice = lastRecord.getDeviceid();
+            String preferredDevice = "PREFERRED_DEVICE"; // Replace with your constant
+            if (!currentDevice.equals(preferredDevice) && lastDevice.equals(preferredDevice)) {
+                return null; // Skip this row, keep lastRecord
+            }
+        }
+
+        // Create and return a cleaned record
+        Stage1CleanEntity record = new Stage1CleanEntity();
+        record.setId(Integer.parseInt(fields[0])); // Assuming id is 1st column
+        record.setDeviceid(fields[1]);
+        record.setTime(currentTime);
+        // Set other fields (voltage1, current1, etc.) from fields[]
+        return record;
+    }
+
+    public boolean load() {
+        System.out.println("Service loaded at: " + LocalTime.now() + ". Would keep syncing every 15 minutes.");
+        isRunning.set(true);
+        System.out.println("Triggered sync at: " + LocalTime.now());
+        LocalDateTime lastTime = repository.findLatestTime();
+        LocalDateTime startTime = lastTime != null ? lastTime.plusMinutes(1) : LocalDateTime.of(2025, 1, 1, 0, 0);
+        System.out.println("Latest time in database: " + startTime+"... going to fetch now...");
+        fetchAndSync(startTime);
+
+        return isRunning.get();
+    }
+}
+
+
+
+
+
+

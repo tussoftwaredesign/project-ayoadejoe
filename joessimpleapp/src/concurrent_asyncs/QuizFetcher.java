@@ -16,7 +16,7 @@ import enum_oops2.QuizCategory;
 import nio_fileoperations.DataSaver;
 import record_pojos.QuizData;
 
-public class QuizFetcher {
+public class QuizFetcher extends AbstractFetcher<QuizData> {
 
     private static final String QUIZ_API = "https://the-trivia-api.com/v2/questions?categories=history,science&limit=5";
     
@@ -61,6 +61,12 @@ public class QuizFetcher {
             return new QuizData("Error loading quiz", List.of(), "", null);
         }
     }
+
+	@Override
+	public QuizData fetch() {
+		// TODO Auto-generated method stub
+		return null;
+	}
     
 
 }

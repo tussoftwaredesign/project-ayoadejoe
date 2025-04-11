@@ -6,6 +6,16 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 import com.formdev.flatlaf.FlatLightLaf;
 
+
+/**
+ * Who Wants to be a Knowledge Bank - Quiz & Joke App
+ * A desktop application built using Java Swing that presents users with quiz questions
+ * and rewards correct answers with jokes fetched live from the internet.
+ *
+ * @Author: Joseph Adetunji Ayoade
+ * Created for: MSc Software Design With AI - OOP2 Coursework
+ * April 2025
+ */
 public class PreLaunch {
 	
 	public PreLaunch() {
@@ -28,17 +38,3 @@ public class PreLaunch {
 	
 }
 
-
-/*
- * Method Reference
-
-Use method createAndShowGUI in class QuizJokeApp as a function to run.�
-
-createAndShowGUI does not run the method immediately.
-
-It also does not care for now what the method returns.
-
-It creates a method reference � basically a shortcut to say:
-
-�Call createAndShowGUI later when needed.�
-*/

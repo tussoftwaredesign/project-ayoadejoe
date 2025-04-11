@@ -1,12 +1,8 @@
 package events_gui;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridLayout;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -17,25 +13,12 @@ import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import javax.swing.JToggleButton;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
-import javax.swing.border.EtchedBorder;
-import javax.swing.border.LineBorder;
-import javax.swing.border.TitledBorder;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -54,71 +37,78 @@ import record_pojos.ScoreTracker;
 
 /**
  * Who Wants to be a Knowledge Bank - Quiz & Joke App
- * A desktop application built using Java Swing that presents users with quiz questions
- * and rewards correct answers with jokes fetched live from the internet.
+ * A desktop application that presents users with quiz questions and rewards correct answers with jokes.
  *
  * @Author: Joseph Adetunji Ayoade
  * Created for: MSc Software Design With AI - OOP2 Coursework
  * April 2025
  */
-public class QuizJokeApp extends JFrame {
-    // UI Components
-    private JLabel questionLabel;
-    private JPanel optionsPanel;
-    private JButton submitButton;
-    private JButton nextButton;
-    private JLabel jokeLabel;
-    private JToggleButton networkButton;
-    private ButtonGroup answerGroup;
-    private JLabel scoreLabel;
-    private JLabel categoryLabel;
-    private JTextArea historyScores;
 
+public class QuizJokeApp {
+    // UI Reference : Separation of concern
+    private final QuizJokeAppUI ui;
+    
+    //LOGIC
+    // Fetchers
+    //The AsyncSaver method fetch uses functional interfaces, Supplier and Consumer which are lazy to retrieve the jsons from the Quiz and Joke APIs
+    //The consumer acts as a callback and is invoked when the Async Fetchers return from the API with their jsons
+    //The lambdas are invoked when the AsyncFetcher object is created
+    //The objects of both Azynfetchers are then used to retrieve quizzes and jokes as json using the Joke and Quiz Fetcher Async classes
+    private final AsyncFetcher<QuizData> quizFetcher = new AsyncFetcher<>();
+    private final AsyncFetcher<JokeData> jokeFetcher = new AsyncFetcher<>();
     // Data and State
     private QuizData currentQuiz;
     private boolean connected;
     private String username;
+    
+  //We initialize the scoretracker which is a basic class with to keep track of the user scores
+    private final ScoreTracker scoreTracker = new ScoreTracker();
+    //Custom methods to inject lambdas into the generic DataSaver constructor 
+    private final DataSaver<JokeData> jokeSaver = createJokeSaver();  
+    private final DataSaver<QuizData> quizSaver = createQuizSaver();
+    
     private List<QuizData> offlineQuizzes;
     private List<JokeData> offlineJokes;
     private int offlineQuizCount = 0;
     private int offlineJokeCount = 0;
+    
+    private ButtonGroup answerGroup;
 
-    // Fetchers and Storage
-    private final AsyncFetcher<QuizData> quizFetcher = new AsyncFetcher<>();
-    private final AsyncFetcher<JokeData> jokeFetcher = new AsyncFetcher<>();
-    private final ScoreTracker scoreTracker = new ScoreTracker();
+    //Storage
+    //This map is created to load the users and their history, it uses the name as key and the recursive class node as the details
     private final Map<String, ScoreNode> allHistories = ScoreStorageMultiUser.loadAll();
-    private final DataSaver<JokeData> jokeSaver = createJokeSaver();
-    private final DataSaver<QuizData> quizSaver = createQuizSaver();
+
+    
+    
+    
+   //Methods
 
     public QuizJokeApp() {
-        initializeUI();
+        ui = new QuizJokeAppUI();
         setupEventListeners();
         checkInternetConnectionAsync();
     }
-    
-    //Logic Section
-    
+
     private void setupEventListeners() {
         // Network toggle listener
-        networkButton.addItemListener(e -> {
-            if (networkButton.isSelected()) {
+        ui.getNetworkButton().addItemListener(e -> {
+            if (ui.getNetworkButton().isSelected()) {
                 checkInternetConnectionAsync();
-                networkButton.setBackground(new Color(0, 200, 83));
-                networkButton.setForeground(Color.WHITE);
+                ui.getNetworkButton().setBackground(new Color(50, 200, 50));
+                ui.getNetworkButton().setForeground(Color.WHITE);
             } else {
-                networkButton.setBackground(Color.LIGHT_GRAY);
-                networkButton.setForeground(Color.BLACK);
-                networkButton.setText("Offline");
+                ui.getNetworkButton().setBackground(Color.LIGHT_GRAY);
+                ui.getNetworkButton().setForeground(Color.BLACK);
+                ui.getNetworkButton().setText("Offline");
             }
         });
 
         // Submit and next button listeners
-        submitButton.addActionListener(this::handleSubmit);
-        nextButton.addActionListener(e -> loadQuiz());
+        ui.getSubmitButton().addActionListener(this::handleSubmit);
+        ui.getNextButton().addActionListener(e -> loadQuiz());
 
         // Window closing listener to save user data
-        addWindowListener(new WindowAdapter() {
+        ui.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
                 if (username != null && !username.isEmpty()) {
@@ -134,19 +124,19 @@ public class QuizJokeApp extends JFrame {
     }
 
     private void loadQuiz() {
-        if (networkButton.isSelected() && connected) {
-            jokeLabel.setText("Answer to see your reward...");
-            questionLabel.setText("Loading...");
-            optionsPanel.removeAll();
-            optionsPanel.revalidate();
-            optionsPanel.repaint();
+        if (ui.getNetworkButton().isSelected() && connected) {
+            ui.getJokeLabel().setText("Answer to see your reward...");
+            ui.getQuestionLabel().setText("Loading...");
+            ui.getOptionsPanel().removeAll();
+            ui.getOptionsPanel().revalidate();
+            ui.getOptionsPanel().repaint();
             quizFetcher.fetch(QuizFetcher::fetchQuiz, this::displayQuiz);
         } else {
-            jokeLabel.setText("You are offline");
-            questionLabel.setText("Application is offline");
-            optionsPanel.removeAll();
-            optionsPanel.revalidate();
-            optionsPanel.repaint();
+            ui.getJokeLabel().setText("You are offline");
+            ui.getQuestionLabel().setText("Application is offline");
+            ui.getOptionsPanel().removeAll();
+            ui.getOptionsPanel().revalidate();
+            ui.getOptionsPanel().repaint();
             displayQuiz(offlineQuizzes.get(--offlineQuizCount));
         }
     }
@@ -154,8 +144,8 @@ public class QuizJokeApp extends JFrame {
     private void displayQuiz(QuizData quiz) {
         System.out.println("In display: " + quiz);
         currentQuiz = quiz;
-        categoryLabel.setText(quiz.category().name());
-        questionLabel.setText("<html><div style='text-align: center;'>" + quiz.question() + "</div></html>");
+        ui.getCategoryLabel().setText(quiz.category().name());
+        ui.getQuestionLabel().setText("<html><div style='text-align: center;'>" + quiz.question() + "</div></html>");
         answerGroup = new ButtonGroup();
 
         if (connected) quizSaver.appendOne(quiz);
@@ -167,53 +157,53 @@ public class QuizJokeApp extends JFrame {
             radio.setHorizontalAlignment(SwingConstants.CENTER);
             radio.setBackground(new Color(255, 255, 204));
             answerGroup.add(radio);
-            optionsPanel.add(radio);
+            ui.getOptionsPanel().add(radio);
         }
 
-        optionsPanel.revalidate();
-        optionsPanel.repaint();
+        ui.getOptionsPanel().revalidate();
+        ui.getOptionsPanel().repaint();
     }
 
     private void handleSubmit(ActionEvent e) {
         if (currentQuiz == null || answerGroup.getSelection() == null) {
-            jokeLabel.setText("Please select an answer first.");
+            ui.getJokeLabel().setText("Please select an answer first.");
             return;
         }
 
         String selected = answerGroup.getSelection().getActionCommand();
         boolean correct = selected.equals(currentQuiz.correctAnswer());
-        jokeLabel.setText(correct ? "Correct! Fetching a joke..." : "Oops! Let's lighten the mood...");
+        ui.getJokeLabel().setText(correct ? "Correct! Fetching a joke..." : "Oops! Let's lighten the mood...");
         scoreTracker.recordAttempt(correct);
-        scoreLabel.setText(scoreTracker.toString());
+        ui.getScoreLabel().setText(scoreTracker.toString());
 
         if (connected) {
             jokeFetcher.fetch(JokeFetcher::fetchJoke, joke -> {
-                jokeLabel.setText(joke.getFormattedJoke());
+                ui.getJokeLabel().setText(joke.getFormattedJoke());
                 if (!joke.delivery().equals("Couldn't fetch joke!")) jokeSaver.appendOne(joke);
             });
         } else {
-            jokeLabel.setText(offlineJokes.get(--offlineJokeCount).getFormattedJoke());
+            ui.getJokeLabel().setText(offlineJokes.get(--offlineJokeCount).getFormattedJoke());
         }
     }
 
     private void checkInternetConnectionAsync() {
-        networkButton.setText("Checking...");
-        networkButton.setBackground(Color.ORANGE);
-        networkButton.setSelected(true);
+        ui.getNetworkButton().setText("Checking...");
+        ui.getNetworkButton().setBackground(Color.ORANGE);
+        ui.getNetworkButton().setSelected(true);
 
         new Thread(() -> {
             connected = InternetChecker.hasInternet();
             SwingUtilities.invokeLater(() -> {
                 if (connected) {
-                    networkButton.setText("Online");
-                    networkButton.setBackground(new Color(76, 175, 80));
-                    networkButton.setForeground(Color.WHITE);
-                    networkButton.setSelected(true);
+                    ui.getNetworkButton().setText("Online");
+                    ui.getNetworkButton().setBackground(new Color(76, 175, 80));
+                    ui.getNetworkButton().setForeground(Color.WHITE);
+                    ui.getNetworkButton().setSelected(true);
                 } else {
-                    networkButton.setText("Offline");
-                    networkButton.setBackground(Color.RED);
-                    networkButton.setForeground(Color.WHITE);
-                    networkButton.setSelected(false);
+                    ui.getNetworkButton().setText("Offline");
+                    ui.getNetworkButton().setBackground(Color.RED);
+                    ui.getNetworkButton().setForeground(Color.WHITE);
+                    ui.getNetworkButton().setSelected(false);
                     processOfflineCats();
                 }
                 loadQuiz();
@@ -238,7 +228,7 @@ public class QuizJokeApp extends JFrame {
                     ScoreStorageMultiUser.saveAll(allHistories);
                 } else {
                     ScoreNode history = allHistories.get(username);
-                    if (history != null) history.printHistory(historyScores, 0);
+                    if (history != null) history.printHistory(ui.getHistoryScores(), 0);
                 }
             }
         }
@@ -330,142 +320,5 @@ public class QuizJokeApp extends JFrame {
                 });
     }
 
-
-    // Initialize the UI components and layout
-    private void initializeUI() {
-        setTitle("Who wants to be a Knowledge Bank?");
-        setIconImage(Toolkit.getDefaultToolkit().getImage(
-                QuizJokeApp.class.getClassLoader().getResource("data/wwtbakbsmall.png")));
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
-        setSize(700, 500);
-
-        // Main content panel with padding
-        JPanel paddedContent = new JPanel(new BorderLayout(10, 10));
-        paddedContent.setBorder(new CompoundBorder(
-                new LineBorder(new Color(255, 153, 102)),
-                new EmptyBorder(15, 15, 15, 15)));
-        paddedContent.setBackground(new Color(255, 153, 204));
-        setContentPane(paddedContent);
-
-        // Center: Options panel for quiz answers
-        optionsPanel = new JPanel(new GridLayout(4, 0));
-        optionsPanel.setBackground(new Color(255, 255, 204));
-        paddedContent.add(optionsPanel, BorderLayout.CENTER);
-
-        // South: Buttons and joke label
-        paddedContent.add(createSouthPanel(), BorderLayout.SOUTH);
-
-        // North: Question label and network toggle
-        paddedContent.add(createNorthPanel(), BorderLayout.NORTH);
-
-        // East: Score, category, and history
-        paddedContent.add(createEastPanel(), BorderLayout.EAST);
-
-        setVisible(true);
-    }
-
-    private JPanel createSouthPanel() {
-        JPanel southPanel = new JPanel(new BorderLayout());
-        southPanel.setBackground(new Color(255, 153, 204));
-        southPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-
-        // Button panel
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 20, 10));
-        buttonPanel.setBackground(new Color(255, 153, 204));
-        submitButton = createRoundedButton("Submit Answer");
-        nextButton = createRoundedButton("Next Question");
-        buttonPanel.add(submitButton);
-        buttonPanel.add(nextButton);
-
-        // Joke label
-        jokeLabel = new JLabel("Answer to see your reward...", SwingConstants.CENTER);
-        jokeLabel.setFont(new Font("Monospaced", Font.PLAIN, 14));
-        jokeLabel.setForeground(Color.DARK_GRAY);
-
-        southPanel.add(buttonPanel, BorderLayout.NORTH);
-        southPanel.add(jokeLabel, BorderLayout.SOUTH);
-        return southPanel;
-    }
-
-    private JPanel createNorthPanel() {
-        JPanel northPanel = new JPanel(new BorderLayout());
-        northPanel.setBackground(new Color(255, 153, 204));
-
-        // Question label
-        questionLabel = new JLabel("Loading question...", SwingConstants.CENTER);
-        questionLabel.setFont(new Font("Comic Sans MS", Font.BOLD, 20));
-        northPanel.add(questionLabel, BorderLayout.CENTER);
-
-        // Logo
-        JLabel logoLabel = new JLabel();
-        logoLabel.setIcon(new ImageIcon(Toolkit.getDefaultToolkit().getImage(
-                QuizJokeApp.class.getClassLoader().getResource("data/wwtbakbsmall.png"))));
-        northPanel.add(logoLabel, BorderLayout.WEST);
-
-        // Network toggle button
-        networkButton = new JToggleButton("ONLINE");
-        networkButton.putClientProperty("JButton.buttonType", "switch");
-        networkButton.setSelected(true);
-        networkButton.setBackground(new Color(0, 200, 83));
-        networkButton.setForeground(Color.WHITE);
-        northPanel.add(networkButton, BorderLayout.EAST);
-
-        return northPanel;
-    }
-
-    private JPanel createEastPanel() {
-        JPanel eastPanel = new JPanel(new BorderLayout());
-        eastPanel.setPreferredSize(new Dimension(200, 10));
-
-        JPanel infoPanel = new JPanel(new GridLayout(3, 1, 0, 5));
-        infoPanel.setBorder(new EmptyBorder(0, 0, 0, 0));
-        infoPanel.setBackground(new Color(255, 255, 204));
-
-        // Score label
-        scoreLabel = new JLabel("", SwingConstants.CENTER);
-        scoreLabel.setFont(new Font("Comic Sans MS", Font.PLAIN, 14));
-        scoreLabel.setForeground(Color.BLACK);
-        scoreLabel.setBorder(new TitledBorder(
-                new EtchedBorder(EtchedBorder.LOWERED, Color.WHITE, new Color(160, 160, 160)),
-                "Score", TitledBorder.RIGHT, TitledBorder.TOP, null, new Color(255, 51, 204)));
-        infoPanel.add(scoreLabel);
-
-        // Category label
-        categoryLabel = new JLabel("", SwingConstants.CENTER);
-        categoryLabel.setForeground(new Color(0, 51, 102));
-        categoryLabel.setBorder(new TitledBorder(
-                new EtchedBorder(EtchedBorder.LOWERED, Color.WHITE, new Color(160, 160, 160)),
-                "Category", TitledBorder.RIGHT, TitledBorder.TOP, null, new Color(255, 51, 204)));
-        infoPanel.add(categoryLabel);
-
-        // History text area
-        historyScores = new JTextArea("");
-        historyScores.setBorder(new TitledBorder(
-                new EtchedBorder(EtchedBorder.LOWERED, Color.WHITE, new Color(160, 160, 160)),
-                "History", TitledBorder.RIGHT, TitledBorder.TOP, null, new Color(255, 51, 204)));
-        historyScores.setFont(new Font("Tahoma", Font.PLAIN, 10));
-        historyScores.setLineWrap(true);
-        historyScores.setWrapStyleWord(true);
-        historyScores.setBackground(new Color(255, 255, 204));
-        JScrollPane scrollPane = new JScrollPane(historyScores);
-        infoPanel.add(scrollPane);
-
-        eastPanel.add(infoPanel, BorderLayout.CENTER);
-        return eastPanel;
-    }
-
-    private JButton createRoundedButton(String text) {
-        JButton button = new JButton(text);
-        button.setFocusPainted(false);
-        button.setFont(new Font("Arial", Font.BOLD, 14));
-        button.setBorder(BorderFactory.createLineBorder(Color.DARK_GRAY, 1, true));
-        button.setBackground(new Color(70, 130, 180));
-        button.setForeground(Color.WHITE);
-        button.setPreferredSize(new Dimension(160, 40));
-        return button;
-    }
-
-    
 
 }

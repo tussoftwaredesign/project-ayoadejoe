@@ -16,6 +16,7 @@ public final class ScoreNode extends ScoreEntry {
     @Override
     public String summary() {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, MMMM d, yyyy 'at' h:mm a");
+        if(playerName == null) return null;
         return playerName.toUpperCase() + ": " + dateTime.format(formatter) + " | " + score + "/" + total + " (" +
                 (total == 0 ? "0" : String.format("%.1f", (score * 100.0) / total)) + "%)";
     }

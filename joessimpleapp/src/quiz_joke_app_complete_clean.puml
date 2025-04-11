@@ -1,0 +1,118 @@
+
+@startuml QuizJokeAppFullUML
+
+skinparam classAttributeIconSize 0
+skinparam backgroundColor #fdfdfd
+skinparam classFontColor black
+skinparam classFontName Consolas
+
+package "concurrent_asyncs" {
+    abstract class AbstractFetcher {
+        # fetch() : Object
+    }
+
+    class AsyncFetcher {
+        {static} - executor : ExecutorService
+        + fetch(Supplier, Consumer) : void
+        + shutdown() : void
+    }
+
+    class JokeFetcher {
+        + fetchJoke() : JokeData
+        + fetch() : JokeData
+    }
+
+    class QuizFetcher {
+        + fetchQuiz() : QuizData
+        + fetch() : QuizData
+    }
+}
+
+package "events_gui" {
+    class QuizJokeApp {
+        {static} - quizFetcher : AsyncFetcher
+        {static} - jokeFetcher : AsyncFetcher
+        {static} - scoreTracker : ScoreTracker
+        {static} - allHistories : Map
+        {static} - username : String
+        {static} - offlineJokes : List
+        {static} - offlineQuizzes : List
+
+        + loadQuiz()
+        + handleSubmit()
+        + checkInternetConnectionAsync()
+        + checkUser()
+    }
+}
+
+package "history" {
+    class ScoreEntry {
+        # playerName : String
+        # dateTime : LocalDateTime
+        # score : int
+        # total : int
+
+        # summary() : String
+    }
+
+    class ScoreNode {
+        - next : ScoreNode
+
+        + getNext() : ScoreNode
+        + printHistory(JTextArea, int) : void
+        + summary() : String
+    }
+
+    interface ScoreSummary {
+        + summary() : String
+    }
+
+    class ScoreStorageMultiUser {
+        {static} - FILE_PATH : String
+
+        + saveAll(Map) : void
+        + loadAll() : Map
+    }
+}
+
+package "nio_fileoperations" {
+    class DataSaver {
+        - filePath : Path
+        - toJsonMapper : Function
+        - fromJsonMapper : Function
+
+        + appendOne(Object) : void
+        + loadAll() : List
+    }
+}
+
+package "record_pojos" {
+    class QuizData <<record>> {
+        + question : String
+        + options : List<String>
+        + correctAnswer : String
+        + category : QuizCategory
+    }
+
+    class JokeData <<record>> {
+        + setup : String
+        + delivery : String
+
+        + getFormattedJoke() : String
+    }
+}
+
+AbstractFetcher <|-- JokeFetcher
+AbstractFetcher <|-- QuizFetcher
+
+ScoreEntry <|-- ScoreNode
+ScoreNode ..|> ScoreSummary
+
+QuizFetcher ..> QuizData : returns >
+JokeFetcher ..> JokeData : returns >
+QuizJokeApp ..> AsyncFetcher : uses >
+QuizJokeApp ..> DataSaver : uses >
+QuizJokeApp ..> ScoreNode : stores >
+QuizJokeApp ..> ScoreStorageMultiUser : uses >
+
+@enduml

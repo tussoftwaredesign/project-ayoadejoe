@@ -18,6 +18,7 @@ public class PreLaunch {
 		}
     	//I use a method reference here to prepare the QuizzJokeApp Instance, which is then invoked when the SwingUtilities thread runs
     	SwingUtilities.invokeLater(QuizJokeApp::new);
+      
         
 	}
 
@@ -31,13 +32,13 @@ public class PreLaunch {
 /*
  * Method Reference
 
-Use method createAndShowGUI in class QuizJokeApp as a function to run.”
+Use method createAndShowGUI in class QuizJokeApp as a function to run.ï¿½
 
 createAndShowGUI does not run the method immediately.
 
 It also does not care for now what the method returns.
 
-It creates a method reference — basically a shortcut to say:
+It creates a method reference ï¿½ basically a shortcut to say:
 
-“Call createAndShowGUI later when needed.”
+ï¿½Call createAndShowGUI later when needed.ï¿½
 */
